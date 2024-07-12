@@ -49,8 +49,7 @@ You can add assets in several ways, and it's available for most builders.
 
 ## Twig file
 
-            ->build()
-            ->streamResponse()n asset path.  
+`{{ gotenberg_asset() }}` Twig function will help you to generate an asset path.
 This function work as [asset() Twig function](https://symfony.com/doc/current/templates.html#linking-to-css-javascript-and-image-assets).
 
 You can provide an absolute path.
@@ -97,9 +96,9 @@ class YourController
     public function yourControllerMethod(GotenbergPdfInterface $gotenberg): Response
     {
         return $gotenberg->html()
-            ->content('t
-            ->build()
-            ->streamResponse()
+            ->content('twig_simple_pdf.html.twig')
+            ->generate()
+            ->stream()
          ;
     }
 }
@@ -143,8 +142,8 @@ class YourController
                 'img/ceo.jpeg',
                 'img/admin.jpeg'
             )
-            ->build()
-            ->streamResponse()
+            ->generate()
+            ->stream()
         ;
     }
 }
@@ -167,8 +166,8 @@ class YourController
                 '../img/ceo.jpeg',
                 '../img/admin.jpeg'
             )
-            ->build()
-            ->streamResponse()
+            ->generate()
+            ->stream()
         ;
     }
 }
@@ -192,9 +191,9 @@ class YourController
                 '../img/ceo.jpeg',
                 '../img/admin.jpeg'
             )
-            ->addAsset('
-            ->build()
-            ->streamResponse()
+            ->addAsset('../img/developer.jpeg') 
+            ->generate()
+            ->stream()
         ;
     }
 }

@@ -13,7 +13,7 @@ class SensiolabsGotenbergBundle extends Bundle
         return \dirname(__DIR__);
     }
 
-    public function build(ContainerBuilder $container): void
+    public function generate(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new GotenbergPass());
     }
