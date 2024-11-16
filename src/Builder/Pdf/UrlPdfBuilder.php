@@ -22,10 +22,10 @@ final class UrlPdfBuilder extends AbstractChromiumPdfBuilder
         AssetBaseDirFormatter $asset,
         RequestStack $requestStack,
         WebhookConfigurationRegistryInterface $webhookConfigurationRegistry,
+        UrlGeneratorInterface|null $urlGenerator = null,
         Environment|null $twig = null,
-        private readonly UrlGeneratorInterface|null $urlGenerator = null,
     ) {
-        parent::__construct($gotenbergClient, $asset, $requestStack, $webhookConfigurationRegistry, $twig);
+        parent::__construct($gotenbergClient, $asset, $requestStack, $webhookConfigurationRegistry, $urlGenerator, $twig);
 
         $this->addNormalizer('route', $this->generateUrlFromRoute(...));
     }

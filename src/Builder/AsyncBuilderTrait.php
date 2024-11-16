@@ -4,6 +4,7 @@ namespace Sensiolabs\GotenbergBundle\Builder;
 
 use Sensiolabs\GotenbergBundle\Webhook\WebhookConfigurationRegistry;
 use Sensiolabs\GotenbergBundle\Webhook\WebhookConfigurationRegistryInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 trait AsyncBuilderTrait
 {
@@ -25,6 +26,8 @@ trait AsyncBuilderTrait
 
     private WebhookConfigurationRegistryInterface $webhookConfigurationRegistry;
 
+    protected UrlGeneratorInterface|null $urlGenerator;
+
     public function generateAsync(): string
     {
         $operationId = ($this->operationIdGenerator ?? self::defaultOperationIdGenerator(...))();
@@ -33,10 +36,22 @@ trait AsyncBuilderTrait
             'sensiolabs_gotenberg.builder' => $this::class,
         ]);
 
+        $url = $this->webhookUrl ?? null;
+        $errorUrl = $this->errorWebhookUrl ?? null;
+        if (!$url || !$errorUrl) {
+            if (!($this->urlGenerator ?? null)) {
+                throw new \LogicException(\sprintf('A webhook URL or Router is required to use "%s" method. Set the URL or try to run "composer require symfony/routing".', __METHOD__));
+            }
+
+            $routerUrl = $this->urlGenerator?->generate('_webhook_controller', ['type' => 'gotenberg'], UrlGeneratorInterface::ABSOLUTE_URL);
+            $url ??= $routerUrl;
+            $errorUrl ??= $routerUrl;
+        }
+
         $this->webhookExtraHeaders['X-Gotenberg-Operation-Id'] = $operationId;
         $headers = [
-            'Gotenberg-Webhook-Url' => $this->webhookUrl,
-            'Gotenberg-Webhook-Error-Url' => $this->errorWebhookUrl,
+            'Gotenberg-Webhook-Url' => $url,
+            'Gotenberg-Webhook-Error-Url' => $errorUrl,
             'Gotenberg-Webhook-Extra-Http-Headers' => json_encode($this->webhookExtraHeaders, \JSON_THROW_ON_ERROR),
         ];
         if (null !== $this->fileName) {
@@ -98,6 +113,6 @@ trait AsyncBuilderTrait
 
     protected static function defaultOperationIdGenerator(): string
     {
-        return 'gotenberg_'.bin2hex(random_bytes(16)).microtime(true);
+        return 'gotenberg_' . bin2hex(random_bytes(16)) . microtime(true);
     }
 }

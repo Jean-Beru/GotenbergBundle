@@ -46,6 +46,7 @@
         "symfony/stopwatch": "^6.4 || ^7.0",
         "symfony/twig-bundle": "^6.4 || ^7.0",
         "symfony/var-dumper": "^6.4 || ^7.0",
+        "symfony/webhook": "^7.1",
         "twig/twig": "^3.14"
     },
     "config": {

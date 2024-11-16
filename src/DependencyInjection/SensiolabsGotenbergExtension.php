@@ -4,6 +4,7 @@ namespace Sensiolabs\GotenbergBundle\DependencyInjection;
 
 use Sensiolabs\GotenbergBundle\Builder\Pdf\PdfBuilderInterface;
 use Sensiolabs\GotenbergBundle\Builder\Screenshot\ScreenshotBuilderInterface;
+use Sensiolabs\GotenbergBundle\Webhook\GotenbergRequestParser;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -11,6 +12,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Webhook\Controller\WebhookController;
 
 /**
  * @phpstan-type WebhookDefinition array{url?: string, route?: array{0: string, 1: array<string, mixed>}}
@@ -93,6 +95,10 @@ class SensiolabsGotenbergExtension extends Extension
 
         $definition = $container->getDefinition('sensiolabs_gotenberg.asset.base_dir_formatter');
         $definition->replaceArgument(2, $config['assets_directory']);
+
+        if ($container::willBeAvailable('symfony/webhook', WebhookController::class, ['symfony/framework-bundle'])) {
+            $container->register('sensiolabs_gotenberg.webhook.request_parser', GotenbergRequestParser::class);
+        }
     }
 
     /**
