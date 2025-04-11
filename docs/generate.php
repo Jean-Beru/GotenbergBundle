@@ -1,17 +1,17 @@
 #!/usr/bin/env php
 <?php
 
+use Sensiolabs\GotenbergBundle\Builder\BuilderInterface;
 use Sensiolabs\GotenbergBundle\Builder\Pdf\ConvertPdfBuilder;
+use Sensiolabs\GotenbergBundle\Builder\Pdf\FlattenPdfBuilder;
 use Sensiolabs\GotenbergBundle\Builder\Pdf\HtmlPdfBuilder;
 use Sensiolabs\GotenbergBundle\Builder\Pdf\LibreOfficePdfBuilder;
 use Sensiolabs\GotenbergBundle\Builder\Pdf\MarkdownPdfBuilder;
 use Sensiolabs\GotenbergBundle\Builder\Pdf\MergePdfBuilder;
-use Sensiolabs\GotenbergBundle\Builder\Pdf\PdfBuilderInterface;
 use Sensiolabs\GotenbergBundle\Builder\Pdf\SplitPdfBuilder;
 use Sensiolabs\GotenbergBundle\Builder\Pdf\UrlPdfBuilder;
 use Sensiolabs\GotenbergBundle\Builder\Screenshot\HtmlScreenshotBuilder;
 use Sensiolabs\GotenbergBundle\Builder\Screenshot\MarkdownScreenshotBuilder;
-use Sensiolabs\GotenbergBundle\Builder\Screenshot\ScreenshotBuilderInterface;
 use Sensiolabs\GotenbergBundle\Builder\Screenshot\UrlScreenshotBuilder;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -22,7 +22,7 @@ require_once \dirname(__DIR__).'/vendor/autoload.php';
 class Summary
 {
     /**
-     * @var array<string, array<string, ReflectionClass<PdfBuilderInterface|ScreenshotBuilderInterface>>>
+     * @var array<string, array<string, ReflectionClass<BuilderInterface>>>
      */
     private array $builders = [];
 
@@ -32,7 +32,7 @@ class Summary
     private array $filenames = [];
 
     /**
-     * @param ReflectionClass<PdfBuilderInterface|ScreenshotBuilderInterface> $class
+     * @param ReflectionClass<BuilderInterface> $class
      */
     public function register(string $type, ReflectionClass $class): void
     {
@@ -76,18 +76,19 @@ class BuilderParser
      */
     public const BUILDERS = [
         'pdf' => [
-            HtmlPdfBuilder::class,
-            UrlPdfBuilder::class,
-            MarkdownPdfBuilder::class,
-            LibreOfficePdfBuilder::class,
-            MergePdfBuilder::class,
             ConvertPdfBuilder::class,
+            FlattenPdfBuilder::class,
+            HtmlPdfBuilder::class,
+            LibreOfficePdfBuilder::class,
+            MarkdownPdfBuilder::class,
+            MergePdfBuilder::class,
             SplitPdfBuilder::class,
+            UrlPdfBuilder::class,
         ],
         'screenshot' => [
             HtmlScreenshotBuilder::class,
-            UrlScreenshotBuilder::class,
             MarkdownScreenshotBuilder::class,
+            UrlScreenshotBuilder::class,
         ],
     ];
 
@@ -97,9 +98,11 @@ class BuilderParser
         'setConfigurations',
         'generate',
         'generateAsync',
-        'getMultipartFormData',
         'fileName',
         'processor',
+        'type',
+        'getBodyBag',
+        'getHeaderBag',
     ];
 
     private string $name;
@@ -120,7 +123,7 @@ class BuilderParser
     private array $methodsSignature = [];
 
     /**
-     * @param class-string<PdfBuilderInterface|ScreenshotBuilderInterface> $builder
+     * @param class-string<BuilderInterface> $builder
      */
     public function prepare(Summary $summary, string $type, string $builder): void
     {
@@ -144,12 +147,20 @@ class BuilderParser
                 return '';
             }
 
+            $lastKey = array_key_last($seeList);
+
             $markdown = '> [!TIP]';
-            foreach ($seeList as $see) {
+            foreach ($seeList as $key => $see) {
                 $markdown .= "\n> See: [{$see}]({$see})";
+
+                $isLast = $lastKey === $key;
+
+                if (false === $isLast) {
+                    $markdown .= '<br />';
+                }
             }
 
-            return $markdown;
+            return rtrim($markdown, '<br />');
         };
 
         /**
@@ -211,7 +222,7 @@ class BuilderParser
     }
 
     /**
-     * @param ReflectionClass<PdfBuilderInterface|ScreenshotBuilderInterface> $class
+     * @param ReflectionClass<BuilderInterface> $class
      */
     private function prepareBuilder(ReflectionClass $class): void
     {
@@ -255,7 +266,9 @@ class BuilderParser
             $this->prepareBuilderFromClass($trait);
         }
 
-        $defaultPackage = $this->parsePhpDoc($class->getDocComment() ?: '')['package'] ?? null;
+        $classPhpDoc = $this->parsePhpDoc($class->getDocComment() ?: '');
+        $defaultPackage = $classPhpDoc['package'] ?? null;
+        $defaultSeeList = $classPhpDoc['tags']['see'] ?? null;
 
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if (\in_array($method->getName(), self::EXCLUDED_METHODS, true) === true) {
@@ -291,10 +304,12 @@ class BuilderParser
                 $this->parts['methods']['@'][$method->getShortName()]['tags']['param'] = $parsedDocBlock['tags']['param'] + $this->parts['methods']['@'][$method->getShortName()]['tags']['param'];
             }
 
-            if (isset($parsedDocBlock['tags']['see'])) {
+            $tagsSeeList = array_merge($defaultSeeList ?? [], $parsedDocBlock['tags']['see'] ?? []);
+
+            if ([] !== $tagsSeeList) {
                 $this->parts['methods']['@'][$method->getShortName()]['tags']['see'] = array_unique(array_merge(
-                    $this->parts['methods']['@'][$method->getShortName()]['tags']['see'],
-                    $parsedDocBlock['tags']['see'],
+                    $this->parts['methods']['@'][$method->getShortName()]['tags']['see'] ?? [],
+                    $tagsSeeList,
                 ));
             }
         }

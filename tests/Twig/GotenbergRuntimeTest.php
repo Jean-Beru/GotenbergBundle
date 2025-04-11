@@ -5,8 +5,6 @@ namespace Sensiolabs\GotenbergBundle\Tests\Twig;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Sensiolabs\GotenbergBundle\Builder\BuilderAssetInterface;
-use Sensiolabs\GotenbergBundle\Builder\Pdf\AbstractChromiumPdfBuilder;
-use Sensiolabs\GotenbergBundle\Builder\Screenshot\AbstractChromiumScreenshotBuilder;
 use Sensiolabs\GotenbergBundle\Twig\GotenbergRuntime;
 
 #[CoversClass(GotenbergRuntime::class)]
