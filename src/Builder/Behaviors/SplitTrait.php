@@ -21,7 +21,7 @@ trait SplitTrait
     abstract protected function getBodyBag(): BodyBag;
 
     /**
-     * Either intervals or pages. (default None).
+     * Either intervals or pages.
      */
     #[ExposeSemantic(new NativeEnumNodeBuilder('split_mode', enumClass: SplitMode::class))]
     public function splitMode(SplitMode|null $splitMode = null): self
@@ -36,7 +36,7 @@ trait SplitTrait
     }
 
     /**
-     * Either the intervals or the page ranges to extract, depending on the selected mode. (default None).
+     * Either the intervals or the page ranges to extract, depending on the selected mode.
      */
     #[ExposeSemantic(new ScalarNodeBuilder('split_span'))]
     public function splitSpan(string $splitSpan): self

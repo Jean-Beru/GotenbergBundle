@@ -181,25 +181,13 @@ Define whether to print the entire content in one single page.<br /><br />If the
 
 ### skipNetworkIdleEvent(bool $bool)
 ### splitMode(?Sensiolabs\GotenbergBundle\Enumeration\SplitMode $splitMode)
-Either intervals or pages.<br />
-
-> [!TIP]
-> See: [https://gotenberg.dev/docs/routes#split-chromium](https://gotenberg.dev/docs/routes#split-chromium)<br />
-> See: [https://gotenberg.dev/docs/routes#split-libreoffice](https://gotenberg.dev/docs/routes#split-libreoffice)
+Either intervals or pages.
 
 ### splitSpan(string $splitSpan)
-Either the intervals or the page ranges to extract, depending on the selected mode.<br />
-
-> [!TIP]
-> See: [https://gotenberg.dev/docs/routes#split-chromium](https://gotenberg.dev/docs/routes#split-chromium)<br />
-> See: [https://gotenberg.dev/docs/routes#split-libreoffice](https://gotenberg.dev/docs/routes#split-libreoffice)
+Either the intervals or the page ranges to extract, depending on the selected mode.
 
 ### splitUnify(bool $bool)
-Specify whether to put extracted pages into a single file or as many files as there are page ranges. Only works with pages mode. (default false).<br />
-
-> [!TIP]
-> See: [https://gotenberg.dev/docs/routes#split-chromium](https://gotenberg.dev/docs/routes#split-chromium)<br />
-> See: [https://gotenberg.dev/docs/routes#split-libreoffice](https://gotenberg.dev/docs/routes#split-libreoffice)
+Specify whether to put extracted pages into a single file or as many files as there are page ranges. Only works with pages mode. (default false).
 
 ### userAgent(string $userAgent)
 Override the default User-Agent HTTP header.<br />
