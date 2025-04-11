@@ -266,7 +266,9 @@ class BuilderParser
             $this->prepareBuilderFromClass($trait);
         }
 
-        $defaultPackage = $this->parsePhpDoc($class->getDocComment() ?: '')['package'] ?? null;
+        $classPhpDoc = $this->parsePhpDoc($class->getDocComment() ?: '');
+        $defaultPackage = $classPhpDoc['package'] ?? null;
+        $defaultSeeList = $classPhpDoc['tags']['see'] ?? null;
 
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if (\in_array($method->getName(), self::EXCLUDED_METHODS, true) === true) {
@@ -302,10 +304,12 @@ class BuilderParser
                 $this->parts['methods']['@'][$method->getShortName()]['tags']['param'] = $parsedDocBlock['tags']['param'] + $this->parts['methods']['@'][$method->getShortName()]['tags']['param'];
             }
 
-            if (isset($parsedDocBlock['tags']['see'])) {
+            $tagsSeeList = array_merge($defaultSeeList ?? [], $parsedDocBlock['tags']['see'] ?? []);
+
+            if ([] !== $tagsSeeList) {
                 $this->parts['methods']['@'][$method->getShortName()]['tags']['see'] = array_unique(array_merge(
-                    $this->parts['methods']['@'][$method->getShortName()]['tags']['see'],
-                    $parsedDocBlock['tags']['see'],
+                    $this->parts['methods']['@'][$method->getShortName()]['tags']['see'] ?? [],
+                    $tagsSeeList,
                 ));
             }
         }

@@ -49,17 +49,6 @@ final class BuilderStack
             throw new \LogicException("{$class} has already been added.");
         }
 
-        //        $type = 'custom';
-        //        if (method_exists($class, 'type')) {
-        //            $type = $class::type();
-        //        }
-        //
-        //        if (!\in_array($type, ['pdf', 'screenshot'], true)) { // TODO : temporary soft lock
-        //            throw new \LogicException('Invalid builder type. Must be one of "pdf" or "screenshot".');
-        //        }
-        //
-        //        $this->builders[$class] = $type;
-
         $reflection = new \ReflectionClass($class);
         $nodeAttributes = $reflection->getAttributes(SemanticNode::class);
 
@@ -70,9 +59,7 @@ final class BuilderStack
         /** @var SemanticNode $semanticNode */
         $semanticNode = $nodeAttributes[0]->newInstance();
 
-        if (!\in_array($semanticNode->type, ['pdf', 'screenshot'], true)) { // TODO : temporary soft lock
-            throw new \LogicException('Invalid builder type. Must be one of "pdf" or "screenshot".');
-        }
+        $this->builders[$class] = $semanticNode->type;
 
         $this->typeReverseMapping[$semanticNode->type][$semanticNode->name] = $class;
 
@@ -104,7 +91,7 @@ final class BuilderStack
                 'callback' => $callback,
             ];
 
-            $this->configNode[$type][$semanticNode->name][] = $attribute->node;
+            $this->configNode[$semanticNode->type][$semanticNode->name][] = $attribute->node;
         }
     }
 
