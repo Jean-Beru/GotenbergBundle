@@ -92,7 +92,6 @@ abstract class GotenbergBuilderTestCase extends TestCase
 
     protected function assertGotenbergFormDataFile(string $name, string $contentType, string $path): void
     {
-        dd($this->client->getBody());
         foreach ($this->client->getBody() as $part) {
             if (!$part instanceof DataPart) {
                 continue;

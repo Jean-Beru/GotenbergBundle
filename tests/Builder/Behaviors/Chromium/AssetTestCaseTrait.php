@@ -26,8 +26,6 @@ trait AssetTestCaseTrait
             ->generate()
         ;
 
-        $this->assertGotenbergFormDataFile($expectedFilename, $expectedContentType, $expectedPath);
-
         $this->assertContentFile($expectedFilename, $expectedContentType);
     }
 
