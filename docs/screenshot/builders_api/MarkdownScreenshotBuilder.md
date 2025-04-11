@@ -123,6 +123,10 @@ The image compression format, either "png", "jpeg" or "webp". (default png).
 > [!TIP]
 > See: [https://gotenberg.dev/docs/routes#screenshots-route](https://gotenberg.dev/docs/routes#screenshots-route)
 
+### getHeadersBag()
+> [!TIP]
+> See: [https://gotenberg.dev/docs/routes#screenshots-route](https://gotenberg.dev/docs/routes#screenshots-route)
+
 ### header(string $template, array $context)
 > [!TIP]
 > See: [https://gotenberg.dev/docs/routes#screenshots-route](https://gotenberg.dev/docs/routes#screenshots-route)
@@ -189,6 +193,13 @@ Sets the JavaScript expression to wait before converting an HTML document to PDF
 
 ### webhook(array $webhook)
 > [!TIP]
+> See: [https://gotenberg.dev/docs/routes#screenshots-route](https://gotenberg.dev/docs/routes#screenshots-route)
+
+### webhookConfiguration(string $name)
+Providing an existing $name from the configuration file, it will correctly set both success and error webhook URLs as well as extra_http_headers if defined.<br />
+
+> [!TIP]
+> See: [https://gotenberg.dev/docs/webhook](https://gotenberg.dev/docs/webhook)<br />
 > See: [https://gotenberg.dev/docs/routes#screenshots-route](https://gotenberg.dev/docs/routes#screenshots-route)
 
 ### webhookErrorRoute(string $route, array $parameters, ?string $method)

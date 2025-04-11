@@ -109,6 +109,10 @@ Flattening a PDF combines all its contents into a single layer. (default false).
 > [!TIP]
 > See: [https://gotenberg.dev/docs/routes#convert-with-libreoffice](https://gotenberg.dev/docs/routes#convert-with-libreoffice)
 
+### getHeadersBag()
+> [!TIP]
+> See: [https://gotenberg.dev/docs/routes#convert-with-libreoffice](https://gotenberg.dev/docs/routes#convert-with-libreoffice)
+
 ### landscape(bool $bool)
 Set the paper orientation to landscape.<br />
 
@@ -214,6 +218,13 @@ Specify whether to put extracted pages into a single file or as many files as th
 
 ### webhook(array $webhook)
 > [!TIP]
+> See: [https://gotenberg.dev/docs/routes#convert-with-libreoffice](https://gotenberg.dev/docs/routes#convert-with-libreoffice)
+
+### webhookConfiguration(string $name)
+Providing an existing $name from the configuration file, it will correctly set both success and error webhook URLs as well as extra_http_headers if defined.<br />
+
+> [!TIP]
+> See: [https://gotenberg.dev/docs/webhook](https://gotenberg.dev/docs/webhook)<br />
 > See: [https://gotenberg.dev/docs/routes#convert-with-libreoffice](https://gotenberg.dev/docs/routes#convert-with-libreoffice)
 
 ### webhookErrorRoute(string $route, array $parameters, ?string $method)

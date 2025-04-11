@@ -28,6 +28,10 @@ Flattening a PDF combines all its contents into a single layer. (default false).
 > [!TIP]
 > See: [https://gotenberg.dev/docs/routes#merge-pdfs-route](https://gotenberg.dev/docs/routes#merge-pdfs-route)
 
+### getHeadersBag()
+> [!TIP]
+> See: [https://gotenberg.dev/docs/routes#merge-pdfs-route](https://gotenberg.dev/docs/routes#merge-pdfs-route)
+
 ### metadata(array $metadata)
 Resets the metadata.<br />
 
@@ -52,6 +56,13 @@ Enable PDF for Universal Access for optimal accessibility.
 
 ### webhook(array $webhook)
 > [!TIP]
+> See: [https://gotenberg.dev/docs/routes#merge-pdfs-route](https://gotenberg.dev/docs/routes#merge-pdfs-route)
+
+### webhookConfiguration(string $name)
+Providing an existing $name from the configuration file, it will correctly set both success and error webhook URLs as well as extra_http_headers if defined.<br />
+
+> [!TIP]
+> See: [https://gotenberg.dev/docs/webhook](https://gotenberg.dev/docs/webhook)<br />
 > See: [https://gotenberg.dev/docs/routes#merge-pdfs-route](https://gotenberg.dev/docs/routes#merge-pdfs-route)
 
 ### webhookErrorRoute(string $route, array $parameters, ?string $method)

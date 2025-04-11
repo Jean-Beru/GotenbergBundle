@@ -11,6 +11,10 @@ Sets download from to download each entry (file) in parallel (URLs MUST return a
 > See: [https://gotenberg.dev/docs/routes#convert-into-pdfa--pdfua-route](https://gotenberg.dev/docs/routes#convert-into-pdfa--pdfua-route)
 
 ### files(Stringable|string $paths)
+### getHeadersBag()
+> [!TIP]
+> See: [https://gotenberg.dev/docs/routes#convert-into-pdfa--pdfua-route](https://gotenberg.dev/docs/routes#convert-into-pdfa--pdfua-route)
+
 ### pdfFormat(?Sensiolabs\GotenbergBundle\Enumeration\PdfFormat $format)
 Convert the resulting PDF into the given PDF/A format.
 
@@ -25,6 +29,13 @@ Enable PDF for Universal Access for optimal accessibility.
 
 ### webhook(array $webhook)
 > [!TIP]
+> See: [https://gotenberg.dev/docs/routes#convert-into-pdfa--pdfua-route](https://gotenberg.dev/docs/routes#convert-into-pdfa--pdfua-route)
+
+### webhookConfiguration(string $name)
+Providing an existing $name from the configuration file, it will correctly set both success and error webhook URLs as well as extra_http_headers if defined.<br />
+
+> [!TIP]
+> See: [https://gotenberg.dev/docs/webhook](https://gotenberg.dev/docs/webhook)<br />
 > See: [https://gotenberg.dev/docs/routes#convert-into-pdfa--pdfua-route](https://gotenberg.dev/docs/routes#convert-into-pdfa--pdfua-route)
 
 ### webhookErrorRoute(string $route, array $parameters, ?string $method)
