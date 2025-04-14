@@ -251,12 +251,6 @@ class BuilderParser
      */
     private function prepareBuilderFromClass(ReflectionClass $class): void
     {
-        $parentClass = $class->getParentClass();
-
-        if (false !== $parentClass) {
-            $this->prepareBuilderFromClass($parentClass);
-        }
-
         $classPhpDoc = $this->parsePhpDoc($class->getDocComment() ?: '');
         $defaultPackage = $classPhpDoc['package'] ?? null;
 
