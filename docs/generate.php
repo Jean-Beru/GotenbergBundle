@@ -235,6 +235,7 @@ class BuilderParser
         }
 
         $this->prepareBuilderFromClass($class);
+        $this->cleanBuilderFromClass($class);
 
         foreach ($this->parts['methods']['@'] as $methodName => $parts) {
             $package = $parts['package'] ?? '@';
@@ -251,6 +252,20 @@ class BuilderParser
      */
     private function prepareBuilderFromClass(ReflectionClass $class): void
     {
+        $parentClass = $class->getParentClass();
+
+        if (false !== $parentClass) {
+            $this->prepareBuilderFromClass($parentClass);
+        }
+
+        foreach ($class->getInterfaces() as $interface) {
+            $this->prepareBuilderFromClass($interface);
+        }
+
+        foreach ($class->getTraits() as $trait) {
+            $this->prepareBuilderFromClass($trait);
+        }
+
         $classPhpDoc = $this->parsePhpDoc($class->getDocComment() ?: '');
         $defaultPackage = $classPhpDoc['package'] ?? null;
 
@@ -294,6 +309,17 @@ class BuilderParser
                     $parsedDocBlock['tags']['see'],
                 )));
             }
+        }
+    }
+
+    /**
+     * @param ReflectionClass<object> $class
+     */
+    private function cleanBuilderFromClass(ReflectionClass $class): void
+    {
+        foreach ($class->getMethods(ReflectionMethod::IS_PROTECTED | ReflectionMethod::IS_PRIVATE) as $method) {
+            unset($this->methodsSignature[$method->getName()]);
+            unset($this->parts['methods']['@'][$method->getShortName()]);
         }
     }
 
