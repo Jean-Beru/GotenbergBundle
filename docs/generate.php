@@ -303,10 +303,10 @@ class BuilderParser
             }
 
             if (isset($parsedDocBlock['tags']['see'])) {
-                $this->parts['methods']['@'][$method->getShortName()]['tags']['see'] = array_unique(array_merge(
+                $this->parts['methods']['@'][$method->getShortName()]['tags']['see'] = array_unique(array_map('trim', array_merge(
                     $this->parts['methods']['@'][$method->getShortName()]['tags']['see'] ?? [],
                     $parsedDocBlock['tags']['see'],
-                ));
+                )));
             }
         }
     }
