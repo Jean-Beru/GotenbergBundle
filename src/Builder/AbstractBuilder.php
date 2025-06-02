@@ -6,7 +6,9 @@ use Psr\Container\ContainerInterface;
 use Sensiolabs\GotenbergBundle\Builder\Attributes\NormalizeGotenbergPayload;
 use Sensiolabs\GotenbergBundle\Builder\Result\GotenbergAsyncResult;
 use Sensiolabs\GotenbergBundle\Builder\Result\GotenbergFileResult;
+use Sensiolabs\GotenbergBundle\Builder\Util\NormalizerFactory;
 use Sensiolabs\GotenbergBundle\Client\GotenbergClientInterface;
+use Sensiolabs\GotenbergBundle\Exception\InvalidNormalizerException;
 use Sensiolabs\GotenbergBundle\Processor\NullProcessor;
 use Sensiolabs\GotenbergBundle\Processor\ProcessorInterface;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -139,8 +141,9 @@ abstract class AbstractBuilder implements BuilderAsyncInterface, BuilderFileInte
      */
     private function normalizePayloadBody(): \Generator
     {
-        $reflection = new \ReflectionClass(static::class);
+        $normalizers = [];
 
+        $reflection = new \ReflectionClass(static::class);
         foreach (array_reverse($reflection->getMethods()) as $method) {
             $attributes = $method->getAttributes(NormalizeGotenbergPayload::class);
 
@@ -148,22 +151,19 @@ abstract class AbstractBuilder implements BuilderAsyncInterface, BuilderFileInte
                 continue;
             }
 
-            foreach ($method->invoke($this) as $key => $normalizer) {
-                if (!\is_callable($normalizer)) {
-                    throw new \RuntimeException(\sprintf('Normalizer "%s" is not a valid callable function.', $key));
-                }
-
-                if (null === ($value = $this->getBodyBag()->get($key))) {
-                    continue;
-                }
-                $this->getBodyBag()->unset($key);
-
-                yield from $normalizer($key, $value);
+            foreach ($method->invoke($this) as $key => $value) {
+                $normalizers[$key] = $value;
             }
         }
 
         foreach ($this->getBodyBag()->all() as $key => $value) {
-            yield [$key => $value];
+            $normalizer = $normalizers[$key] ?? NormalizerFactory::noop();
+
+            if (!\is_callable($normalizer)) {
+                throw new InvalidNormalizerException(\sprintf('Normalizer "%s" is not a valid callable function.', $key));
+            }
+
+            yield from $normalizer($key, $value);
         }
     }
 }
