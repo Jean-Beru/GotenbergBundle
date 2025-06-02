@@ -21,7 +21,7 @@ class NormalizerFactory
     }
 
     /**
-     * @return (\Closure(string, array<string, mixed>): list<array<string, mixed>>)
+     * @return (\Closure(string, array<string, mixed>): list<array<string, string>>)
      */
     public static function json(bool $associative = true): \Closure
     {

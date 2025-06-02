@@ -78,7 +78,7 @@ abstract class AbstractBuilder implements BuilderAsyncInterface, BuilderFileInte
     public function generate(): GotenbergFileResult
     {
         $this->validatePayloadBody();
-        $payloadBody = iterator_to_array($this->normalizePayloadBody());
+        $payloadBody = iterator_to_array($this->normalizePayloadBody(), false);
 
         $response = $this->getClient()->call(
             $this->getEndpoint(),
@@ -99,7 +99,7 @@ abstract class AbstractBuilder implements BuilderAsyncInterface, BuilderFileInte
     public function generateAsync(): GotenbergAsyncResult
     {
         $this->validatePayloadBody();
-        $payloadBody = iterator_to_array($this->normalizePayloadBody());
+        $payloadBody = iterator_to_array($this->normalizePayloadBody(), false);
 
         $response = $this->getClient()->call(
             $this->getEndpoint(),
@@ -158,9 +158,7 @@ abstract class AbstractBuilder implements BuilderAsyncInterface, BuilderFileInte
                 }
                 $this->getBodyBag()->unset($key);
 
-                foreach ($normalizer($key, $value) as $item) {
-                    yield $item;
-                }
+                yield from $normalizer($key, $value);
             }
         }
 
