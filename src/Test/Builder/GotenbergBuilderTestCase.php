@@ -1,6 +1,6 @@
 <?php
 
-namespace Sensiolabs\GotenbergBundle\Tests\Builder;
+namespace Sensiolabs\GotenbergBundle\Test\Builder;
 
 use PHPUnit\Framework\TestCase;
 use Sensiolabs\GotenbergBundle\Builder\BuilderInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\Mime\Part\TextPart;
  */
 abstract class GotenbergBuilderTestCase extends TestCase
 {
-    protected const FIXTURE_DIR = __DIR__.'/../Fixtures';
+    protected const FIXTURE_DIR = __DIR__.'/../../../tests/Fixtures';
 
     protected GotenbergClientAsserter $client;
     protected Container $container;

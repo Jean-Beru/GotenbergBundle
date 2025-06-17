@@ -17,15 +17,18 @@ class GotenbergFileResult extends AbstractGotenbergResult
     private bool $processed = false;
 
     /**
-     * @param ProcessorInterface<TProcessorResult> $processor
+     * @phpstan-assert ProcessorInterface<TProcessorResult> $this->processor
      */
     public function __construct(
-        ResponseInterface $response,
         private readonly ResponseStreamInterface $stream,
-        private readonly ProcessorInterface $processor,
-        private readonly string $disposition,
+        private ProcessorInterface $processor,
+        private string $disposition,
     ) {
-        parent::__construct($response);
+    }
+
+    protected function getResponse(): ResponseInterface
+    {
+        return $this->stream->key();
     }
 
     /**
@@ -33,7 +36,9 @@ class GotenbergFileResult extends AbstractGotenbergResult
      *
      * @param ProcessorInterface<TNewProcessorResult> $processor
      *
-     * @return self<TNewProcessorResult>
+     * @phpstan-assert ProcessorInterface<TNewProcessorResult> $this->processor
+     *
+     * @phpstan-this-out self<TNewProcessorResult>
      */
     public function processor(ProcessorInterface $processor): self
     {
@@ -41,24 +46,20 @@ class GotenbergFileResult extends AbstractGotenbergResult
             throw new ProcessorException('Already processed query.');
         }
 
-        return new self($this->response, $this->stream, $processor, $this->disposition);
+        $this->processor = $processor;
+
+        return $this;
     }
 
-    public function getStatusCode(): int
+    public function setDisposition(string $disposition): self
     {
-        $this->ensureExecution();
+        if ($this->processed) {
+            throw new ProcessorException('Already processed query.');
+        }
 
-        return $this->response->getStatusCode();
-    }
+        $this->disposition = $disposition;
 
-    /**
-     * @return array<string, array<string>>
-     */
-    public function getHeaders(): array
-    {
-        $this->ensureExecution();
-
-        return $this->response->getHeaders();
+        return $this;
     }
 
     /**

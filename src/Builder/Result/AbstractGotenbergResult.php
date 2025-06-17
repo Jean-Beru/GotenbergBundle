@@ -8,11 +8,32 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 abstract class AbstractGotenbergResult
 {
+    private int $statusCode;
+
+    /**
+     * @var array<string, array<string>>
+     */
+    private array $headers;
+
     private bool $executed = false;
 
-    public function __construct(
-        protected readonly ResponseInterface $response,
-    ) {
+    abstract protected function getResponse(): ResponseInterface;
+
+    public function getStatusCode(): int
+    {
+        $this->ensureExecution();
+
+        return $this->statusCode;
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public function getHeaders(): array
+    {
+        $this->ensureExecution();
+
+        return $this->headers;
     }
 
     protected function ensureExecution(): void
@@ -22,8 +43,11 @@ abstract class AbstractGotenbergResult
         }
 
         try {
-            if (!\in_array($this->response->getStatusCode(), [200, 204], true)) {
-                throw new ClientException($this->response->getContent(false), $this->response->getStatusCode());
+            $this->statusCode = $this->getResponse()->getStatusCode();
+            $this->headers = $this->getResponse()->getHeaders();
+
+            if (!\in_array($this->statusCode, [200, 204], true)) {
+                throw new ClientException($this->getResponse()->getContent(false), $this->statusCode);
             }
         } catch (ExceptionInterface $e) {
             throw new ClientException($e->getMessage(), $e->getCode(), $e);
