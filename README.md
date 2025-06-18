@@ -16,9 +16,6 @@
 
 </div>
 
-> [!WARNING]
-> This Bundle is experimental and subject to change in a future release.
-
 ## Generate PDFs and screenshots with Symfony!
 
 This bundle allows you to generate, stream and save PDF locally from URL, HTML,
